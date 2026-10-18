@@ -14,4 +14,4 @@ npm install
 npm run dev
 ```
 
-Pushes to `main` build and deploy to GitHub Pages through `.github/workflows/deploy.yml`.
+Pushes to `main` build and deploy to GitHub Pages through `.github/workflows/deploy.yml`. The site is served at [asenameservice.xyz](https://asenameservice.xyz); `public/CNAME` holds the domain.
