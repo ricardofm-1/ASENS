@@ -11,7 +11,8 @@ export function Header() {
   const { address, connected } = useWallet();
   const { balance } = useBalance();
   const [primary, setPrimary] = useState<string | null>(null);
-  const onHome = useLocation().pathname === '/';
+  const { pathname } = useLocation();
+  const showSearch = pathname !== '/' && !pathname.startsWith('/explorer');
 
   useEffect(() => {
     if (!address) {
@@ -51,9 +52,10 @@ export function Header() {
           Search
         </NavLink>
         <NavLink to="/my">My names</NavLink>
+        <NavLink to="/explorer">Explorer</NavLink>
       </nav>
 
-      {!onHome && <SearchForm variant="compact" />}
+      {showSearch && <SearchForm variant="compact" />}
 
       <div className="header-end">
         <a className="net" href={EXPLORER} target="_blank" rel="noreferrer">

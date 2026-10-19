@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { hexToAse1, shortAse1 } from '@asentum/connect';
 import { CONTROLLER, EXPLORER, REGISTRY } from './config';
 import { Header } from './components/Header';
-import { AddressPage } from './pages/AddressPage';
+import { ExplorerPage } from './pages/ExplorerPage';
 import { Home } from './pages/Home';
 import { MyNames } from './pages/MyNames';
 import { NamePage } from './pages/NamePage';
@@ -22,7 +22,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/name/:name" element={<NamePage />} />
-          <Route path="/address/:addr" element={<AddressPage />} />
+          <Route path="/explorer" element={<ExplorerPage />} />
+          <Route path="/explorer/:query" element={<ExplorerPage />} />
+          <Route path="/address/:addr" element={<AddressRedirect />} />
           <Route path="/my" element={<MyNames />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -55,6 +57,11 @@ function Footer() {
       </p>
     </footer>
   );
+}
+
+function AddressRedirect() {
+  const { addr = '' } = useParams();
+  return <Navigate to={`/explorer/${addr}`} replace />;
 }
 
 function NotFound() {

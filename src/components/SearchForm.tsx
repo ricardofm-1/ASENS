@@ -1,8 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toAse1 } from '@asentum/connect';
-import { lookupPrimary } from '../lib/chain';
-import { errorMessage, formatAse, parseSearch, rememberSearch, tierOf } from '../lib/names';
+import { formatAse, parseSearch, rememberSearch, tierOf } from '../lib/names';
 import { useProtocol } from '../protocol';
 import { Suffix } from './Logo';
 
@@ -11,7 +10,6 @@ export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' 
   const { info } = useProtocol();
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
 
   const parsed = parseSearch(value);
   const hint = (() => {
@@ -22,8 +20,14 @@ export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' 
     return price ? `${label} · ${formatAse(price)} ASE a year` : label;
   })();
 
-  async function onSubmit(event: FormEvent) {
+  function onSubmit(event: FormEvent) {
     event.preventDefault();
+    if (/^0x[0-9a-fA-F]{64}$/.test(value.trim())) {
+      setError(null);
+      navigate(`/explorer/${value.trim().toLowerCase()}`);
+      setValue('');
+      return;
+    }
     const query = parseSearch(value);
     if (query.kind === 'invalid') {
       setError(query.error);
@@ -33,20 +37,10 @@ export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' 
     if (query.kind === 'name') {
       rememberSearch(query.name);
       navigate(`/name/${query.name}`);
-      setValue('');
-      return;
+    } else {
+      navigate(`/explorer/${toAse1(query.hex)}`);
     }
-    setPending(true);
-    try {
-      const name = await lookupPrimary(query.hex);
-      if (name) navigate(`/name/${name}`);
-      else navigate(`/address/${toAse1(query.hex)}`);
-      setValue('');
-    } catch (err) {
-      setError(errorMessage(err));
-    } finally {
-      setPending(false);
-    }
+    setValue('');
   }
 
   return (
@@ -72,9 +66,7 @@ export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' 
           <Suffix />
         </span>
       )}
-      <button type="submit" disabled={pending}>
-        {pending ? 'Looking…' : 'Search'}
-      </button>
+      <button type="submit">Search</button>
       {variant === 'hero' && (error || hint) && <p className={error ? 'search-error' : 'search-hint'}>{error || hint}</p>}
       {variant === 'compact' && error && <p className="search-error">{error}</p>}
     </form>
