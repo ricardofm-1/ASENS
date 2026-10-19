@@ -4,7 +4,7 @@ import { useWallet } from '@asentum/connect';
 import { Suffix } from '../components/Logo';
 import { StatusBadge } from '../components/StatusBadge';
 import { getName, lookupPrimary } from '../lib/chain';
-import { syncNameIndex, subscribeIndex, type IndexProgress, type NameIndex } from '../lib/indexNames';
+import { subscribeIndex, watchNameIndex, type IndexProgress } from '../lib/indexNames';
 import {
   canRenew,
   errorMessage,
@@ -47,26 +47,12 @@ export function MyNames() {
     let cancel = false;
     setRows(null);
     setError(null);
+    const primaryLookup = lookupPrimary(address).catch(() => null);
 
-    (async () => {
-      let index: NameIndex = { nextBlock: 0, names: [], owners: {}, textKeys: {} };
-      try {
-        index = await syncNameIndex();
-      } catch (err) {
-        if (!cancel) setError(errorMessage(err));
-      }
-      if (cancel) return;
-
-      const discovered = index.names.length ? index.names : Object.keys(index.owners);
+    const show = async (discovered: string[]) => {
       const candidates = new Set<string>([...rememberedNames(), ...discovered]);
-
-      let primaryName: string | null = null;
-      try {
-        primaryName = await lookupPrimary(address);
-        if (primaryName) candidates.add(primaryName);
-      } catch {
-        primaryName = null;
-      }
+      const primaryName = await primaryLookup;
+      if (primaryName) candidates.add(primaryName);
       if (cancel) return;
       setPrimary(primaryName);
 
@@ -91,12 +77,17 @@ export function MyNames() {
         mine.sort((a, b) => Number(b.name === primaryName) - Number(a.name === primaryName));
       }
       setRows(mine);
-    })().catch((err: unknown) => {
-      if (!cancel) setError(errorMessage(err));
+    };
+
+    const stop = watchNameIndex((names) => {
+      show(names).catch((err: unknown) => {
+        if (!cancel) setError(errorMessage(err));
+      });
     });
 
     return () => {
       cancel = true;
+      stop();
     };
   }, [address, rev]);
 
@@ -125,9 +116,9 @@ export function MyNames() {
         </p>
       )}
 
-      {!progress.done && (
-        <div className="progress" aria-label="Reading chain history">
-          <span>Reading registrations… {pct}%</span>
+      {!progress.done && progress.total > 0 && (
+        <div className="progress" aria-label="Checking the latest blocks">
+          <span>Checking the latest blocks for new names… {pct}%</span>
           <i style={{ width: `${pct}%` }} />
         </div>
       )}

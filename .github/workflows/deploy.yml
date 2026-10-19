@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    # Refreshes public/names.json so the site has little chain history left to scan.
+    - cron: '*/20 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -24,6 +27,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # On failure the committed names.json is used; the site scans the gap itself.
+      - run: node scripts/snapshot-names.mjs || git checkout -- public/names.json
       - run: npm run build
       # Pages has no SPA rewrites; serving index.html as 404 keeps /name/... links working.
       - run: cp dist/index.html dist/404.html

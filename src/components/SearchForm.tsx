@@ -1,12 +1,13 @@
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toAse1 } from '@asentum/connect';
 import { formatAse, parseSearch, rememberSearch, tierOf } from '../lib/names';
 import { useProtocol } from '../protocol';
 import { Suffix } from './Logo';
 
-export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' }) {
+export function SearchForm({ variant = 'hero', onSearch }: { variant?: 'hero' | 'compact'; onSearch?: () => void }) {
   const navigate = useNavigate();
+  const inputId = useId();
   const { info } = useProtocol();
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' 
       setError(null);
       navigate(`/explorer/${value.trim().toLowerCase()}`);
       setValue('');
+      onSearch?.();
       return;
     }
     const query = parseSearch(value);
@@ -41,15 +43,16 @@ export function SearchForm({ variant = 'hero' }: { variant?: 'hero' | 'compact' 
       navigate(`/explorer/${toAse1(query.hex)}`);
     }
     setValue('');
+    onSearch?.();
   }
 
   return (
     <form className={`search ${variant}`} onSubmit={onSubmit}>
-      <label className="sr-only" htmlFor={`search-${variant}`}>
+      <label className="sr-only" htmlFor={inputId}>
         Search names or addresses
       </label>
       <input
-        id={`search-${variant}`}
+        id={inputId}
         value={value}
         onChange={(event) => {
           setValue(event.target.value);

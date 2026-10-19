@@ -13,6 +13,26 @@ export function Header() {
   const [primary, setPrimary] = useState<string | null>(null);
   const { pathname } = useLocation();
   const showSearch = pathname !== '/' && !pathname.startsWith('/explorer');
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => setMenuOpen(false), [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    const wide = window.matchMedia('(min-width: 761px)');
+    const onWide = () => wide.matches && setMenuOpen(false);
+    document.addEventListener('keydown', onKey);
+    wide.addEventListener('change', onWide);
+    document.body.classList.add('menu-open');
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      wide.removeEventListener('change', onWide);
+      document.body.classList.remove('menu-open');
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!address) {
@@ -37,6 +57,16 @@ export function Header() {
     };
   }, [address]);
 
+  const links = (
+    <>
+      <NavLink to="/" end>
+        Search
+      </NavLink>
+      <NavLink to="/my">My names</NavLink>
+      <NavLink to="/explorer">Explorer</NavLink>
+    </>
+  );
+
   return (
     <header className="header">
       <NavLink to="/" className="brand" aria-label="ASENS home">
@@ -47,13 +77,7 @@ export function Header() {
         </span>
       </NavLink>
 
-      <nav className="nav">
-        <NavLink to="/" end>
-          Search
-        </NavLink>
-        <NavLink to="/my">My names</NavLink>
-        <NavLink to="/explorer">Explorer</NavLink>
-      </nav>
+      <nav className="nav">{links}</nav>
 
       {showSearch && <SearchForm variant="compact" />}
 
@@ -74,6 +98,37 @@ export function Header() {
           radius={12}
           style={{ padding: '10px 18px', fontWeight: 600, fontFamily: 'Outfit, sans-serif', fontSize: 14 }}
         />
+        <button
+          type="button"
+          className={`burger${menuOpen ? ' open' : ''}`}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
+
+      {menuOpen && <div className="menu-backdrop" onClick={() => setMenuOpen(false)} />}
+      <div id="mobile-menu" className={`mobile-menu${menuOpen ? ' open' : ''}`} hidden={!menuOpen}>
+        {pathname !== '/' && <SearchForm variant="compact" onSearch={() => setMenuOpen(false)} />}
+        <nav className="mobile-nav">{links}</nav>
+        {connected && (primary || balance) && (
+          <div className="mobile-account">
+            {primary && (
+              <NavLink className="primary-chip" to={`/name/${primary}`}>
+                {primary}.ase
+              </NavLink>
+            )}
+            {balance && <span className="mobile-balance">{formatAse(balance, 2)} ASE</span>}
+          </div>
+        )}
+        <a className="net" href={EXPLORER} target="_blank" rel="noreferrer">
+          Asentum testnet · Explorer & faucet
+        </a>
       </div>
     </header>
   );

@@ -122,6 +122,34 @@ img { max-width: 100%; }
 }
 .balance { display: none; }
 
+.burger, .mobile-menu, .menu-backdrop { display: none; }
+.burger {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.burger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.burger.open { border-color: var(--brand); background: var(--brand-soft); }
+.burger.open span { background: var(--brand); }
+.burger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
 .home, .page { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
 .home { padding: 76px 0 56px; }
 .eyebrow {
@@ -512,9 +540,103 @@ input:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visib
   .search .suffix { justify-self: end; }
 }
 
-@media (min-width: 980px) {
+.search.compact input { min-width: 0; }
+.header-end { flex-shrink: 0; }
+
+@media (min-width: 1240px) {
   .balance { display: inline; }
 }
+@media (max-width: 1120px) {
+  .header { gap: 14px; }
+  .header-end > .net { display: none; }
+}
+@media (max-width: 1000px) {
+  .header { flex-wrap: wrap; }
+  .header > .search.compact { order: 3; flex-basis: 100%; max-width: none; }
+}
+
+@media (max-width: 760px) {
+  .header { flex-wrap: nowrap; gap: 10px; padding: 10px 14px; }
+  .header > .nav, .header > .search.compact, .header-end > .net, .header-end > .primary-chip, .header-end > .balance { display: none; }
+  .header-end { gap: 8px; }
+  .logo { width: 72px; height: 35px; }
+  .burger { display: inline-flex; }
+
+  .menu-backdrop {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 100dvh;
+    background: rgba(23, 21, 58, 0.28);
+    animation: fade 0.18s ease;
+  }
+  .mobile-menu.open {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+    padding: 14px 14px 18px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 18px 40px rgba(35, 31, 92, 0.14);
+    animation: drop 0.2s ease;
+  }
+  .mobile-menu .search.compact { order: -1; flex: 0 0 auto; max-width: none; }
+  .mobile-menu .search.compact input { padding-top: 12px; padding-bottom: 12px; font-size: 16px; }
+  .mobile-nav { display: flex; flex-direction: column; gap: 2px; }
+  .mobile-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .mobile-nav a:active { background: var(--bg); }
+  .mobile-nav a.active { color: var(--brand); background: var(--brand-soft); }
+  .mobile-account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--bg);
+  }
+  .mobile-account .primary-chip { font-size: 14px; }
+  .mobile-balance { font-family: "DM Mono", ui-monospace, monospace; font-size: 14px; color: var(--ink); }
+  .mobile-menu > .net { padding: 4px 14px 0; }
+  body.menu-open { overflow: hidden; }
+
+  .home, .page { width: calc(100% - 32px); }
+  .page { padding: 30px 0 52px; }
+  .card { padding: 18px; border-radius: 16px; }
+  .duration { flex-direction: column; align-items: stretch; gap: 14px; }
+  .years { justify-content: space-between; }
+  .years button { width: 44px; height: 44px; }
+  .quick-years { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .quick-years button { height: 40px; }
+  .btn { width: 100%; text-align: center; }
+  .row-btns .btn, .add-key .btn { width: auto; flex: 1; }
+  .explorer-result { margin-top: 36px; }
+  .explorer-search input { font-size: 16px !important; }
+  .name-list-title { font-size: 22px; }
+  .footer { padding: 22px 16px; }
+  .footer-links { flex-direction: column; gap: 10px; }
+}
+
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+@keyframes fade { from { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   .skel { animation: none; }

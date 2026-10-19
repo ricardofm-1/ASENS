@@ -7,7 +7,7 @@ import { DurationPicker } from '../components/DurationPicker';
 import { Suffix } from '../components/Logo';
 import { StatusBadge } from '../components/StatusBadge';
 import { getName, quote, readTexts, resolveName } from '../lib/chain';
-import { syncNameIndex } from '../lib/indexNames';
+import { baseNameIndex } from '../lib/indexNames';
 import {
   canRegister,
   canRenew,
@@ -140,7 +140,7 @@ function NameDetails({ name }: { name: string }) {
 
   useEffect(() => {
     let cancel = false;
-    syncNameIndex()
+    baseNameIndex()
       .then((index) => {
         if (!cancel) setExtraKeys(index.textKeys[name] ?? []);
       })

@@ -14,7 +14,7 @@ import {
   type ExplorerQuery,
   type TxDetails,
 } from '../lib/explorer';
-import { syncNameIndex } from '../lib/indexNames';
+import { watchNameIndex } from '../lib/indexNames';
 import {
   canonicalHex,
   errorMessage,
@@ -270,31 +270,27 @@ function Value({ value, field }: { value: unknown; field?: string }) {
 function AddressView({ hex }: { hex: string }) {
   const { data, error, loading } = useLoad<AddressDetails>(() => getAddressDetails(hex), [hex]);
   const [names, setNames] = useState<NameRecord[] | null>(null);
-  const [partial, setPartial] = useState(false);
   const ase = toAse1(hex);
 
   useEffect(() => {
     let cancel = false;
     setNames(null);
-    setPartial(false);
-    (async () => {
-      const [index, primary] = await Promise.all([
-        syncNameIndex().catch(() => null),
-        lookupPrimary(hex).catch(() => null),
-      ]);
-      const candidates = new Set<string>([...rememberedNames(), ...(index?.names ?? [])]);
+    const primaryLookup = lookupPrimary(hex).catch(() => null);
+    const stop = watchNameIndex(async (discovered) => {
+      const candidates = new Set<string>([...rememberedNames(), ...discovered]);
+      const primary = await primaryLookup;
       if (primary) candidates.add(primary);
       const records = await Promise.all([...candidates].map((name) => getName(name).catch(() => null)));
       if (cancel) return;
-      setPartial(!index);
       setNames(
         records.filter(
           (rec): rec is NameRecord => !!rec && sameAddress(rec.owner, hex) && ['active', 'grace'].includes(nameStatus(rec)),
         ),
       );
-    })();
+    });
     return () => {
       cancel = true;
+      stop();
     };
   }, [hex]);
 
@@ -334,9 +330,6 @@ function AddressView({ hex }: { hex: string }) {
               </li>
             ))}
           </ul>
-        )}
-        {names && partial && (
-          <p className="muted">The registration log couldn’t be fully scanned right now, so this list may be incomplete.</p>
         )}
       </div>
       <a className="tx-link" href={`${EXPLORER}/address/${ase}`} target="_blank" rel="noreferrer">
