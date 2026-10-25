@@ -329,11 +329,12 @@ img { max-width: 100%; }
   font-size: 14px;
 }
 .links a:hover { color: var(--brand); }
-.addr-line { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; }
+.addr-line { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; max-width: 100%; }
 .addr-line a {
   font-family: "DM Mono", ui-monospace, monospace;
   font-size: 13px;
   color: var(--ink);
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 .text-btn, .tx-link {
@@ -343,6 +344,7 @@ img { max-width: 100%; }
   padding: 0;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .address-title { font-size: clamp(22px, 3vw, 34px); line-height: 1.25; overflow-wrap: anywhere; }
 
@@ -517,7 +519,7 @@ img { max-width: 100%; }
 .footer a:hover { color: var(--brand); }
 
 .disclaimer { max-width: 44rem; line-height: 1.5; }
-.contract-list { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; max-width: 860px; }
+.contract-list { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; max-width: 860px; overflow-wrap: anywhere; }
 .contract-list .card > .muted { margin-top: 0; }
 .powers { margin: 0 0 14px; padding-left: 1.15em; }
 .powers li { margin: 0 0 8px; line-height: 1.5; }

@@ -59,12 +59,18 @@ export function Header() {
 
   const links = (
     <>
-      <NavLink to="/" end>
+      <NavLink to="/" end onClick={() => setMenuOpen(false)}>
         Search
       </NavLink>
-      <NavLink to="/my">My names</NavLink>
-      <NavLink to="/explorer">Explorer</NavLink>
-      <NavLink to="/contracts">Contracts</NavLink>
+      <NavLink to="/my" onClick={() => setMenuOpen(false)}>
+        My names
+      </NavLink>
+      <NavLink to="/explorer" onClick={() => setMenuOpen(false)}>
+        Explorer
+      </NavLink>
+      <NavLink to="/contracts" onClick={() => setMenuOpen(false)}>
+        Contracts
+      </NavLink>
     </>
   );
 
