@@ -64,6 +64,7 @@ export function Header() {
       </NavLink>
       <NavLink to="/my">My names</NavLink>
       <NavLink to="/explorer">Explorer</NavLink>
+      <NavLink to="/contracts">Contracts</NavLink>
     </>
   );
 

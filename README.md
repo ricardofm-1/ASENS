@@ -4,8 +4,8 @@ Register `.ase` names that point at an Asentum address. Search a name, connect a
 
 ## Contracts (Asentum testnet)
 
-- Registry: `0x81f34ec12752ea464ec5bc6d879ac134ec481857`
-- Controller: `0xc11320f6b10bb91a5ab00da54da6c35be39bbfab`
+- Registry: `ase1s8e5asf82t4yvnk9h3kc0xkpxnkysxzhjad6h3` (`0x81f34ec12752ea464ec5bc6d879ac134ec481857`)
+- Controller: `ase1cyfjpa43pwu35k4spkj5mfkrt03eh0at76862f` (`0xc11320f6b10bb91a5ab00da54da6c35be39bbfab`)
 
 ## Develop
 
