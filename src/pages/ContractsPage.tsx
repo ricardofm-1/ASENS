@@ -134,17 +134,38 @@ function ContractCard({ name, summary, hex }: { name: string; summary: string; h
   );
 }
 
+async function writeClipboard(value: string): Promise<boolean> {
+  try {
+    window.focus();
+    await navigator.clipboard.writeText(value);
+    return true;
+  } catch {
+    try {
+      const area = document.createElement('textarea');
+      area.value = value;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      const ok = document.execCommand('copy');
+      area.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+}
+
 function AddressValue({ href, value, label }: { href: string; value: string; label: string }) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } catch {
-      setCopied(false);
-    }
+    const ok = await writeClipboard(value);
+    if (!ok) return;
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1200);
   }
 
   return (
