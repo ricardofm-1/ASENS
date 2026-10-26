@@ -329,11 +329,12 @@ img { max-width: 100%; }
   font-size: 14px;
 }
 .links a:hover { color: var(--brand); }
-.addr-line { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; }
+.addr-line { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; max-width: 100%; }
 .addr-line a {
   font-family: "DM Mono", ui-monospace, monospace;
   font-size: 13px;
   color: var(--ink);
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 .text-btn, .tx-link {
@@ -343,6 +344,7 @@ img { max-width: 100%; }
   padding: 0;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .address-title { font-size: clamp(22px, 3vw, 34px); line-height: 1.25; overflow-wrap: anywhere; }
 
@@ -515,6 +517,13 @@ img { max-width: 100%; }
 .footer-links { display: flex; flex-wrap: wrap; gap: 16px; }
 .footer a { color: var(--muted); }
 .footer a:hover { color: var(--brand); }
+
+.disclaimer { max-width: 44rem; line-height: 1.5; }
+.contract-list { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; max-width: 860px; overflow-wrap: anywhere; }
+.contract-list .card > .muted { margin-top: 0; }
+.powers { margin: 0 0 14px; padding-left: 1.15em; }
+.powers li { margin: 0 0 8px; line-height: 1.5; }
+.powers li:last-child { margin-bottom: 0; }
 
 .skel { border-radius: 12px; background: linear-gradient(90deg, #ebeaf6, #f6f5fc, #ebeaf6); background-size: 200% 100%; animation: shine 1.2s linear infinite; }
 .skel.title { height: 72px; width: min(420px, 80%); margin-top: 12px; }

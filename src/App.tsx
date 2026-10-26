@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { hexToAse1, shortAse1 } from '@asentum/connect';
 import { CONTROLLER, EXPLORER, REGISTRY } from './config';
 import { Header } from './components/Header';
+import { ContractsPage } from './pages/ContractsPage';
 import { ExplorerPage } from './pages/ExplorerPage';
 import { Home } from './pages/Home';
 import { MyNames } from './pages/MyNames';
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/explorer/:query" element={<ExplorerPage />} />
           <Route path="/address/:addr" element={<AddressRedirect />} />
           <Route path="/my" element={<MyNames />} />
+          <Route path="/contracts" element={<ContractsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
@@ -43,7 +45,9 @@ function Footer() {
         ASENS is the Asentum Name Service. Names live in the registry contract. Every registration payment is split on
         chain, half burned and half sent to the treasury.
       </p>
+      <p>Built on Asentum, an independent community project, not official Asentum software.</p>
       <p className="footer-links">
+        <Link to="/contracts">Contracts</Link>
         <a href={`${EXPLORER}/address/${registry}`} target="_blank" rel="noreferrer">
           Registry {shortAse1(registry)}
         </a>
